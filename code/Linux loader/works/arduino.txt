@@ -1,0 +1,279 @@
+#include<SPI.h>
+#include <avr/wdt.h>
+#define BLOCK_SIZE 4096
+volatile boolean received;
+volatile byte receivedData;
+bool  programStarted = false;
+uint8_t   sizeBlocks = 0;
+uint16_t  dataPtr = 0;
+uint16_t  dataPtrOld = 0;
+char      dataStatus = 'N';
+uint8_t   segmentHigh = 1;
+uint8_t   segmentLow  = 0;
+uint8_t   offsetHigh  = 0;
+uint8_t   offsetLow  = 0;
+uint32_t  dataSize    = BLOCK_SIZE;
+uint16_t  blocksSend  = 0;
+
+uint8_t   dataBuffer[BLOCK_SIZE];
+
+uint8_t   testBuf[] = {0xCB};// "This is a test from arduino over SPI\n (; OHO kaj ovo dela????\n Jojojojo";
+uint8_t   c;
+bool      getBlock = false;
+bool      blockLoaded = false;
+bool      blockEnd = false;
+bool      CmdRdy  = true;
+bool      dataRdy = false;
+ISR (SPI_STC_vect)        //Inerrrput routine function 
+{
+  //SPDR = 0x55;
+  //receivedData = SPDR;   // Get the received data from SPDR register
+  
+  
+      switch(SPDR)      
+    {
+      case 'D': //get data (auto incrementing)
+        SPDR  = dataBuffer[dataPtr];
+        dataPtr++;
+        dataRdy = false;
+        //dataBuffer[0] = 0;
+        //dataStatus = 'N';
+        //Serial.print("D");
+        //Serial.println(dataPtr, DEC);
+        //sendData != sendData;
+        
+        break;
+      case 'B': //size in blocks or restart
+        SPDR = sizeBlocks;  //send size in blocks(1 block = 4096 bytes)
+        dataPtr = 0;
+        blocksSend = 0;
+        dataStatus = 'N';
+        
+        break;
+      case 'S': //Data buffer status
+      //SPDR = dataStatus;
+      //Serial.println(dataPtr, DEC);
+        //Serial.println("In status");
+        SPDR = dataStatus;  //N - data not redy, R - data rady, E - End of data
+        if(dataPtr == BLOCK_SIZE)
+        {
+          //dataPtr = 0;
+          //blocksSend++;
+          //blockLoaded = false;
+          //blockLoaded = false;
+          getBlock = true;
+        }
+          if(blockEnd)
+          {
+            SPDR = 'E';
+            dataStatus = 'E';
+            dataPtr = 0;
+          }else{
+            
+            if(dataRdy == true){
+              SPDR = 'R';
+              dataStatus = 'R'; 
+              //dataPtr = 0;
+              //blockLoaded = false;
+              break;
+            }else{
+              //Serial.println("In");
+              getBlock = true;
+              SPDR = 'N';
+              dataStatus = 'N';
+            }
+            
+          }
+        
+        //Serial.println(blocksSend, DEC);
+        //Serial.println("S");
+
+
+        break;
+      case 'P': //Get Pointer
+        SPDR = dataPtr;  //send data ptr in bytes
+        //Serial.println("P");
+        break;
+      
+      
+      case 't': //Segment(16 bit) (t - lowbyte T - high byte)
+        SPDR  = segmentLow;
+        //Serial.println("t");
+        break;
+      case 'T': //Segment(16 bit) (t - lowbyte T - high byte)
+        SPDR  = segmentHigh;
+        //Serial.println("T");
+        break;
+      case 'o': //Segment(16 bit) (t - lowbyte T - high byte)
+        SPDR  = offsetLow;
+        //Serial.println("o");
+        break;
+      case 'O': //Segment(16 bit) (t - lowbyte T - high byte)
+        SPDR  = offsetHigh;
+        //Serial.println("O");
+        break;
+
+      case 'N': //nop - do nothing
+        SPDR  = 0;
+        //Serial.println("N");
+        break;
+      case 'R': //MASTER RESET
+        blockLoaded = false;
+          dataRdy = false;
+          getBlock = false;
+          dataPtr = 0;
+          CmdRdy  = false;
+          blockEnd = false;
+
+        break;
+    }
+    
+
+    
+  //received = true;       // Sets received as True 
+  //Serial.println(receivedData,HEX);
+ 
+  
+}
+
+void setup()
+{
+  memset(dataBuffer,0,BLOCK_SIZE);
+  memcpy(dataBuffer,testBuf,sizeof(testBuf)); //for debuging
+
+
+  //sizeBlocks = 8;
+  //dataSize = sizeBlocks*BLOCK_SIZE;
+  Serial.begin(115200);
+  
+
+  //SPI_InitStructure.SPI_CPOL = SPI_CPOL_High;
+  //SPI_InitStructure.SPI_CPHA = SPI_CPHA_1Edge;
+
+  // have to send on master in, *slave out*
+  pinMode(MISO, OUTPUT);
+  SPI.setDataMode(SPI_MODE0);
+  // turn on SPI in slave mode
+  SPCR |= _BV(SPE);
+
+  // turn on interrupts
+  SPCR |= _BV(SPIE);
+  //received = false;
+  SPI.attachInterrupt();  //Activate SPI Interuupt 
+  
+}
+
+uint8_t chkSum = 0;
+uint8_t chkSumGot = 0;
+void loop()
+{ 
+  chkSum = 0;
+  //Serial.println("Loop?");
+  if(getBlock == true)
+  {
+    c = 0;
+    while(c == 0)
+    {
+      Serial.write('S'); //we want a new block
+    if(Serial.available())
+    {
+      c = Serial.read();
+      break;
+    }
+      delay(500);
+    }
+    //Serial.write('S'); //we want a new block
+    //while(!Serial.available());
+    //c = Serial.read();
+    if(c == 'E')
+    {
+      blockEnd = true;
+    }
+    if(c != 'r')
+    {
+      return; //got hot garbage
+    }
+    //getBlock = false;
+    CmdRdy  = true;
+  }
+  //while(!Serial.available());
+    //noInterrupts();
+    //c= 'A';
+    delay(1);
+    if(Serial.available() && CmdRdy == true)
+    {
+    //while(!Serial.available());
+    c = (uint8_t)Serial.read();
+
+
+    //Serial.write('R');  //sey you ready
+    switch (c){
+      case 'n': //New block
+        //Serial.flush();
+        
+        Serial.write('r');
+        if(Serial.readBytes(dataBuffer,BLOCK_SIZE) == BLOCK_SIZE)
+        {
+          //sizeBlocks++;
+          Serial.write('c');
+          while(!Serial.available());
+          chkSumGot = Serial.read();
+          for(int i = 0;i < BLOCK_SIZE;i++)
+          {
+            chkSum += dataBuffer[i];
+          }
+          if(chkSum != chkSumGot)
+          {
+            Serial.write('e');
+            break;
+          }
+          Serial.write('d');
+          blockLoaded = true;
+          dataRdy = true;
+          getBlock = false;
+          dataPtr = 0;
+          CmdRdy  = false;
+        }else{
+          Serial.write('e');
+        }
+        
+        //Serial.print(dataBuffer[0],HEX);
+        //Serial.print(dataBuffer[1],HEX);
+        //Serial.flush();
+        break;
+
+      case 't': //Segment(16 bit) (t - lowbyte T - high byte)
+        segmentLow = Serial.read();
+        Serial.write('d');
+        //Serial.println("t");
+        break;
+      case 'T': //Segment(16 bit) (t - lowbyte T - high byte)
+        segmentHigh = Serial.read();
+        Serial.write('d');
+        //Serial.println("T");
+        break;
+      case 'o': //Segment(16 bit) (t - lowbyte T - high byte)
+        offsetLow = Serial.read();
+        Serial.write('d');
+        //Serial.println("o");
+        break;
+      case 'O': //Segment(16 bit) (t - lowbyte T - high byte)
+        offsetHigh = Serial.read();
+        Serial.write('d');
+        //Serial.println("O");
+        break;
+      case 'R':
+        sizeBlocks = 0;
+        Serial.write('d');
+        break;
+      case 'S': //Size in blocks 
+        Serial.write('r');
+        while(!Serial.available());
+        sizeBlocks = Serial.read();
+        Serial.write('d');
+        break;
+    }
+    }
+    //interrupts();
+    
+}
