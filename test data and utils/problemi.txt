@@ -1,0 +1,8 @@
+1. XOSERA nije 5V -> rjeseno 
+Upotrebiti 74HCT245 sklopove kao level shiftere sa 3.3 na 5 i obrrnuto
+
+2. Nisam mogo buildat XOSERIN firmware -> nis imo sve potrebne librarie i kriva make comanda -> rjeseno preko chat gpt-a(hvala Tata na ideji i pomoci)
+3. Cudni rezultati stalno se mjenjali nis mogo ni pisat nit citat u iz xosere nekad COMP se gasio idk isplao da GAL20V8 ima slabe pullup otpore -> rjeseno
+Stavio 220ohm na svaki output i vcc tog cipa
+4. Nista sa UARTA od Xosere -> build je takav da ne postoji jer je to debug -> nerjeseno -> nevazno
+
