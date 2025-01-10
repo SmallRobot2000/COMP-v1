@@ -12,3 +12,8 @@
 %macro PRINTF 0
         int     08h
 %endmacro
+
+; INT 06h: get character in AL
+%macro GETC 0
+        int     09h
+%endmacro

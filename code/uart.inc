@@ -22,22 +22,18 @@ UART_CLK        equ 1843200
 
 ; If 1, ~TXRDY is connected to ~TEST, and the WAIT instruction can be used to
 ; check if the UART's transmit FIFO has space available.
-nTXRDY_IS_nTEST equ 0
+nTXRDY_IS_nTEST equ 1
 
 ; Initialize the UART.
-; 9600 baud, 8 data bits, no parity, 1 stop bit.
-uart_init_9600:
+; 115200 baud, 8 data bits, no parity, 1 stop bit.
+uart_init_115200:
         mov     ax, 0900h
-        out     UART_IER, al    ; disable interrupts and configure FIFO
-        mov     al,ah
-        out     UART_ISR, al
-        mov     al, 10000000b   ; 
+        out     UART_IER, ax    ; disable interrupts and configure FIFO
+        mov     al, 10000011b   ; 8 data bits, no parity, 1 stop bit, DLAB=1
         out     UART_LCR, al
-        mov     ax, 6
-        out     UART_DLL, al
-        mov     al,ah
-        out     UART_DLM, al
-        mov     al, 00000011b   ; disable divisor latch and set 8 data bits, no parity, 1 stop bit
+        mov     ax, UART_CLK/(115200*16)
+        out     UART_DLL, ax
+        mov     al, 00000011b   ; disable divisor latch
         out     UART_LCR, al
         ret
 
@@ -52,8 +48,6 @@ uart_outch:
         in      al, UART_LSR
         test    al, 00100000b
         jz      .wait
-        mov     cx,4000h
-        loop    $
         mov     al, ah
 %endif
         out     UART_THR, al
@@ -75,13 +69,18 @@ uart_outch_int:
         iret
 
 
-uart_inch:      
-; wait until character
-.wait:
-        in      al, UART_LSR
+; Clobbers: al
+uart_getch:
+.wait:  in      al, UART_LSR
         test    al, 00000001b
         jz      .wait
-        mov     cx,4000h
-        loop    $
-        in      al, UART_RBR
+        in      al, UART_RHR
         ret
+
+; Clobbers: al
+uart_getch_int:
+.wait:  in      al, UART_LSR
+        test    al, 00000001b
+        jz      .wait
+        in      al, UART_RHR
+        iret

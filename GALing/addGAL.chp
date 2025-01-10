@@ -13,15 +13,15 @@
                           |                 |
                    IOSEL1 |  5           20 | FPGACS
                           |                 |
-                       NC |  6           19 | RnW
+                       NC |  6           19 | NC
                           |                 |
                        NC |  7           18 | NC
                           |                 |
                        NC |  8           17 | NC
                           |                 |
-                       NC |  9           16 | NC
+                       NC |  9           16 | RnW
                           |                 |
-                       NC | 10           15 | NC
+                       NC | 10           15 | tmp2
                           |                 |
                        NC | 11           14 | NC
                           |                 |

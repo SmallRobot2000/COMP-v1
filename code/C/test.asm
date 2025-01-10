@@ -1,5 +1,6 @@
         bits 16
         cpu 8086
+        org     0100h
         global	putmchar
         global  _start
         extern  main
@@ -11,20 +12,17 @@
 ;Clobbers: ch
 %macro gameReloadWrite 0
         mov     ch, 5
-        int     09h ;game interupt
+        ;int     09h ;game interupt
 %endmacro
 
 
-;_start:
-;
-;    call    main
-;
-;    retf
+_start:
+
+    call    main
+
+    retf
 putmchar:
     mov     ax,[bp-2]
-    push    cx
-    gameReloadWrite
-    pop     cx
     PUTCM
     ret
 
