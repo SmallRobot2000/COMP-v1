@@ -23,7 +23,7 @@
 int chrXpos;
 int chrYpos;
 extern void __cdecl XoWriteReg(int reg, int data);  //__cdecl means that arguments are on stack right to left first on stack is first parametar
-extern int  __cdecl XoReadReg(int reg);             //__cdecl arguments are returned in AX
+extern uint16_t  __cdecl XoReadReg(int reg);             //__cdecl arguments are returned in AX
 extern char __cdecl foo(); 
 extern void testkeyb();
 extern void keyb_CAPS_OFF();
@@ -198,7 +198,7 @@ int main() {
     }
     c_old = 255;
     XoWriteReg(XM_WR_XADDR,0x12);
-    XoWriteReg(XM_XDATA,0x8000); //Volume ch0 to 100%
+    XoWriteReg(XM_XDATA,0x8000);
     XoWriteReg(XM_WR_XADDR,0x10);
     XoWriteReg(XM_XDATA,0x0055); //bitmap 4bpp 2x scaling
 

@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "system.h": "c",
+        "string.h": "c",
+        "*.tcc": "cpp",
+        "tataoutput.h": "c"
+    }
+}

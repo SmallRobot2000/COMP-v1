@@ -5,7 +5,7 @@
 
 FIL_LINK = link.ld
 
-CFLAGS= -march=i8088 -mtune=i8088 -mcmodel=small -ffreestanding -nostdlib -c
+CFLAGS= -march=i8088 -mtune=i8088 -mcmodel=tiny -ffreestanding -nostdlib -c
 LDFLAGS=-T $(FIL_LINK) --oformat binary
 ASFLAGS=-f elf
 #useful ndisasm test.bin -b 16

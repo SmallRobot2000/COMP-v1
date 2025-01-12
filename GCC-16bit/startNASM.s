@@ -3,6 +3,11 @@
    global start
    extern main
    
+
+    EXTERN __dataoffset
+        EXTERN __ldata
+        EXTERN __sbss
+        EXTERN __lbss
 start:
     push    ax
     push    bx
@@ -11,14 +16,15 @@ start:
     push    ds
     push    es
 
+
+
     mov bx, ss
     mov cx, sp
-    mov ax, 0x1000
+    mov ax, cs
     mov ds, ax
     mov es, ax
-    mov ax, cs
     mov ss, ax
-    mov sp, 0x7C00
+    mov sp, 0xFFF0
     push    bx
     push    cx
     call    main

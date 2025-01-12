@@ -6,9 +6,11 @@ section .text
 
 
 global XoWriteReg, XoReadReg
-global Keyb_INIT, Keyb_get_key, Keyb_key_pressed, Keyb_CAPS_on ,Keyb_CAPS_off
+global Keyb_INIT, Keyb_get_key, Keyb_key_pressed, Keyb_CAPS_on ,Keyb_CAPS_off, _KEY_PRESSED, _asm_reset   ;stais for asm
 
 
+_asm_reset:
+    jmp 0xF000:0xFFF0
 
 XoWriteReg:
 
@@ -308,7 +310,7 @@ KEY_DECODE:
     db 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r'  ;ROW 4
     db 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'  ;ROW 5
     db  0,   0 ,  0 ,  0 ,  0 ,  0 ,  0 ,  0   ;ROW 6
-    db  0,   0 , 27 ,  11,  0 ,  0 ,  0 , 10   ;ROW 7
+    db  0,   0 , 27 ,  11,  0 ,  8 ,  0 , 10   ;ROW 7
     db ' ',0xF0,0xF0, 127,0xF0,0xF0,0xF0,0xF0  ;ROW 8
     db '*', '+', '/', '0', '1', '2', '3', '4'  ;ROW 9
     db '5', '6', '7', '8', '9', '-', ',', '.'  ;ROW 10
@@ -321,8 +323,8 @@ KEY_DECODE:
     db 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R'  ;ROW 4
     db 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'  ;ROW 5
     db  0,   0 ,  0 ,  0 ,  0 ,  0 ,  0 ,  0   ;ROW 6
-    db  0,   0 , 27 ,  11,  0 ,  0 ,  0 , 10   ;ROW 7
-    db ' ',0xF0,0xF0, 127,0xF0,0xF0,0xF0,0xF0  ;ROW 8
+    db  0,   0 ,  1 ,  11,  0 ,  8 ,  0 , 10   ;ROW 7
+    db ' ',0xF0,0xF0,  2,0xF0,0xF0,0xF0,0xF0  ;ROW 8
     db '*', '+', '/', '0', '1', '2', '3', '4'  ;ROW 9
     db '5', '6', '7', '8', '9', '-', ',', '.'  ;ROW 10
 
@@ -334,7 +336,7 @@ KEY_DECODE:
     db 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R'  ;ROW 4
     db 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'  ;ROW 5
     db  0,   0 ,  0 ,  0 ,  0 ,  0 ,  0 ,  0   ;ROW 6
-    db  0,   0 , 27 ,  11,  0 ,  0 ,  0 , 10   ;ROW 7
+    db  0,   0 , 27 ,  11,  0 ,  8 ,  0 , 10   ;ROW 7
     db ' ',0xF0,0xF0, 127,0xF0,0xF0,0xF0,0xF0  ;ROW 8
     db '*', '+', '/', '0', '1', '2', '3', '4'  ;ROW 9   ;never used because no key pad
     db '5', '6', '7', '8', '9', '-', ',', '.'  ;ROW 10
