@@ -1,0 +1,67 @@
+Naslov: Gdje je granica između software-a i hardware-a 
+8088 racunalo i razgovor CPU-a sa periferijom
+
+Uvod: Kako sam otkrio svijet 8 bitnih računala
+Prošlost:
+- Ben Eather i 6502
+- Zx Spectrum 48k (z80)
+- C64 (6510)
+- Amiga (Motorola 68000)
+- SCREMA (6502) (moj)
+- ERS (6502) (moj)
+- Zx Spectrum Next accelerated (z80a)
+- RC2014 + 9958 (z180) (moj*)
+- ERS v2 (z80)(moj**)
+- eZ80 ): (moj***)
+- Agon light ez80
+Sadašnjost:
+- i tema ovog projekta: COMP v1.0 (8088)
+Bliska Budućnost:
+- COMP v1.1 (8088)
+- COMP v2(nec V20)
+Daleka budućnost
+- COMP v3 (i286)
+
+
+*- Samo je moja konfiguracija, sam software i hardware nije moj.
+**- ERS v2 napravio shemu ali nikad nije nastala fizička verzija
+***- Nikada nije radio, ali je došao do PCB-a
+
+Problemi:
+1. XOSERA nije 5V nego 3.3V -> upotrijebiti 74HCT245 sklopove kao level shiftere sa 3.3V na 5V i obrrnuto
+2. Nisam mogo buildati XOSERIN firmware -> nisam imao sve potrebne librarie i kriva make comanda -> riješeno preko puno istraživanja i interneta
+3. Cudni rezultati stalno se mjenjali nisam mogao komunicirat sa xoserom, cak se je i COMP nekad gasio ispalo je da GAL20V8 ima slabe pullup otpore -> rješeno
+   Stavio 220ohm na svaki output i vcc tog čipa te je adresni signal A3 imao loš spoj 
+4. Ništa od UARTA na Xoseri -> firmware je takav da ne postoji jer je to debug -> nerješeno -> nevažno
+5. Watcom C compiler "nije bio sretan" sa mojom konfiguracijom procesora bez BIOS-a -> riješeno -> riješeno prelaskom na GCC-IA16-ELF C compiler, ali bilo je problema kod njegove
+   instalacije jer ga nisam mogao instalirati, pa sam ga morao mukotrpno buildatai iz sorce-a -> riješeno
+6. Na tipkovnici neke tipke su imale loš spoj, pa sam ih opet lemio -> riješeno 
+7. Problemi sa algoritmom za kompresiju slike -> riješeno
+8. Problemi sa desnim zvučnikom - iz nekog razloga pisanje u Xoseru uzrokuje šum na zvučniku -> nerješeno
+
+
+
+5 ključnih riječi:
+1. 8088
+2. 8 bit/16 bit computer
+3. sbc - single board computer/mbc - main board computer
+4. assembler
+5. inner PC comunication
+
+Linkovi:
+https://www.youtube.com/watch?v=LnzuMJLZRdU
+navesti github i ostale linkove
+
+Uvodni dio:
+Ja sam se zainteresirao za retro računala jer sam na YouTube-u pogledao video od Ben Eather-a kako izrađuje najjednostavnije moguće 6502 računalo: Video , YouTube video "“Hello, world” from scratch on a 6502" https://www.youtube.com/watch?v=LnzuMJLZRdU.
+U tome video oduševilo me kako je na jednostavan način Ben Eather objasnio kako jedna osoba može razumjeti cijelo računalo ...
+...
+
+Središnji dio:
+
+
+Zaključak:
+
+
+
+
