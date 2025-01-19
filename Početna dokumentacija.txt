@@ -18,7 +18,7 @@ Sadašnjost:
 - i tema ovog projekta: COMP v1.0 (8088)
 Bliska Budućnost:
 - COMP v1.1 (8088)
-- COMP v2(nec V20)
+- COMP v2(nec V20 + DMA)
 Daleka budućnost
 - COMP v3 (i286)
 
